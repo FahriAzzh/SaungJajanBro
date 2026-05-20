@@ -287,6 +287,26 @@
             transform: translateY(-2px);
         }
 
+        .btn-logout {
+            background-color: #dc3545;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 700;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease-in-out;
+            text-decoration: none;
+        }
+
+        .btn-logout:hover {
+            background-color: #c82333;
+            color: white;
+            transform: translateY(-2px);
+        }
+
         .filter-bar {
             background-color: #f8f9ff;
             border: 2px solid #efeefc;
@@ -331,17 +351,27 @@
                 </li>
             </ul>
 
-            <div class="user-balance-box">
-                <div class="wallet-icon-wrapper">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
-                        <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9A1.5 1.5 0 0 1 1.5 3H2V1.78a1.5 1.5 0 0 1 1.864-1.454zM3 3h9v-.191A.5.5 0 0 0 11.378 2.34L3 3zm11 1.5h-11v9h11z"/>
+            <div class="d-flex align-items-center gap-3">
+                <div class="user-balance-box">
+                    <div class="wallet-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
+                            <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9A1.5 1.5 0 0 1 1.5 3H2V1.78a1.5 1.5 0 0 1 1.864-1.454zM3 3h9v-.191A.5.5 0 0 0 11.378 2.34L3 3zm11 1.5h-11v9h11z"/>
+                        </svg>
+                    </div>
+                    <div class="balance-info-text">
+                        <span class="user-name">@Model.UserNama</span>
+                        <span class="balance-label">Periode Aktif</span>
+                        <span class="balance-amount">@Model.PeriodeText</span>
+                    </div>
+                </div>
+
+                <a asp-page="/Auth/Logout" class="btn btn-logout">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                        <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
                     </svg>
-                </div>
-                <div class="balance-info-text">
-                    <span class="user-name">@Model.UserNama</span>
-                    <span class="balance-label">Periode Aktif</span>
-                    <span class="balance-amount">@Model.PeriodeText</span>
-                </div>
+                    Logout
+                </a>
             </div>
         </div>
     </nav>

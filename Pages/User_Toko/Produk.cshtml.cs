@@ -82,7 +82,7 @@ namespace SAUNGJAJAN.Pages.User_Toko
                 var produk = new TbProduk
                 {
                     IdToko = idToko.Value,
-                    NamaMakanan = NamaMakanan,
+                    NamaMakanan = NamaMakanan ?? string.Empty,
                     Jenis = Jenis ?? "makanan",
                     Harga = Harga,
                     Stok = Stok
@@ -100,7 +100,7 @@ namespace SAUNGJAJAN.Pages.User_Toko
                     return await OnGetAsync();
                 }
 
-                produk.NamaMakanan = NamaMakanan;
+                produk.NamaMakanan = NamaMakanan ?? string.Empty;
                 produk.Jenis = Jenis ?? "makanan";
                 produk.Harga = Harga;
                 produk.Stok = Stok;

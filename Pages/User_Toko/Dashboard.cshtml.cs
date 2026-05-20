@@ -145,21 +145,23 @@ namespace SAUNGJAJAN.Pages.User_Toko
                 return RedirectToPage();
             }
 
-            bool pesananMilikToko = await _context.DetailPesanan
-                .AnyAsync(d => d.IdPesanan == idPesanan && d.IdToko == idToko.Value);
-
-            if (!pesananMilikToko)
-            {
-                ErrorMessage = "Pesanan tidak ditemukan untuk toko ini.";
-                return RedirectToPage();
-            }
-
+            // Cek apakah pesanan milik toko ini
             var pesanan = await _context.TbPesanan
+                .Include(p => p.DetailPesanan)
                 .FirstOrDefaultAsync(p => p.IdPesanan == idPesanan);
 
             if (pesanan == null)
             {
                 ErrorMessage = "Pesanan tidak ditemukan.";
+                return RedirectToPage();
+            }
+
+            // Validasi pesanan milik toko yang login
+            bool pesananMilikToko = pesanan.DetailPesanan.Any(d => d.IdToko == idToko.Value);
+
+            if (!pesananMilikToko)
+            {
+                ErrorMessage = "Pesanan tidak ditemukan untuk toko ini.";
                 return RedirectToPage();
             }
 
@@ -172,10 +174,18 @@ namespace SAUNGJAJAN.Pages.User_Toko
                 return RedirectToPage();
             }
 
+            // Validasi: pesanan yang sudah siap tidak bisa dibatalkan
             if (statusLama.Equals("Siap", StringComparison.OrdinalIgnoreCase) &&
                 statusBaru.Equals("Dibatalkan", StringComparison.OrdinalIgnoreCase))
             {
                 ErrorMessage = "Pesanan yang sudah siap tidak bisa dibatalkan.";
+                return RedirectToPage();
+            }
+
+            // Validasi: pesanan yang sudah dibatalkan tidak bisa diubah
+            if (statusLama.Equals("Dibatalkan", StringComparison.OrdinalIgnoreCase))
+            {
+                ErrorMessage = "Pesanan yang sudah dibatalkan tidak bisa diubah statusnya.";
                 return RedirectToPage();
             }
 
@@ -188,6 +198,7 @@ namespace SAUNGJAJAN.Pages.User_Toko
                 return RedirectToPage();
             }
 
+            // Logic saat status diubah ke "Siap"
             if (statusBaru.Equals("Siap", StringComparison.OrdinalIgnoreCase))
             {
                 if (pembayaran.StatusPembayaran.Equals("Ditahan", StringComparison.OrdinalIgnoreCase))
@@ -201,16 +212,19 @@ namespace SAUNGJAJAN.Pages.User_Toko
                         return RedirectToPage();
                     }
 
+                    // Pindahkan dana dari ditahan ke pemasukan toko
                     toko.Pemasukan += pembayaran.JumlahBayar;
                     pembayaran.StatusPembayaran = "Diteruskan";
                     pembayaran.WaktuDiteruskan = DateTime.Now;
                 }
             }
 
+            // Logic saat status diubah ke "Dibatalkan"
             if (statusBaru.Equals("Dibatalkan", StringComparison.OrdinalIgnoreCase))
             {
                 if (pembayaran.StatusPembayaran.Equals("Ditahan", StringComparison.OrdinalIgnoreCase))
                 {
+                    // Refund saldo ke user
                     var user = await _context.TbUser
                         .FirstOrDefaultAsync(u => u.IdUser == pembayaran.IdUser);
 
@@ -223,6 +237,7 @@ namespace SAUNGJAJAN.Pages.User_Toko
                     user.Saldo += pembayaran.JumlahBayar;
                     pembayaran.StatusPembayaran = "Refund";
 
+                    // Kembalikan stok produk
                     var detailList = await _context.DetailPesanan
                         .Where(d => d.IdPesanan == idPesanan)
                         .ToListAsync();
@@ -240,6 +255,7 @@ namespace SAUNGJAJAN.Pages.User_Toko
                 }
             }
 
+            // Update status pesanan
             pesanan.Status = statusBaru;
 
             await _context.SaveChangesAsync();
