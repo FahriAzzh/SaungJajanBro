@@ -2,146 +2,133 @@
 @model SAUNGJAJAN.Pages.User.KwitansiModel
 @{
     ViewData["Title"] = "Kwitansi";
+    Layout = null;
 }
 
-<style>
-    .receipt {
-        max-width: 760px;
-        margin: 30px auto;
-        font-family: Arial, sans-serif;
-        border: 1px solid #ddd;
-        padding: 24px;
-        border-radius: 12px;
-    }
-
-    .top {
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 14px;
-        margin-bottom: 18px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 14px;
-    }
-
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .right {
-        text-align: right;
-    }
-
-    .center {
-        text-align: center;
-    }
-
-    .btn {
-        padding: 9px 14px;
-        border-radius: 8px;
-        border: none;
-        text-decoration: none;
-        cursor: pointer;
-        display: inline-block;
-    }
-
-    .btn-primary {
-        background: #2563eb;
-        color: white;
-    }
-
-    .btn-secondary {
-        background: #64748b;
-        color: white;
-    }
-
-    .no-print {
-        max-width: 760px;
-        margin: 30px auto 0;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    @@media print {
-        .no-print {
-            display: none !important;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SaungJajan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #1f1f1f;
         }
-
-        .receipt {
-            border: none;
-            margin: 0;
-            max-width: 100%;
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
         }
-    }
-</style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="p-0 md:p-6 lg:p-8 flex items-center justify-center min-h-screen">
 
-@if (Model.Data == null)
-{
-    <div class="receipt">
-        <strong>Kwitansi tidak ditemukan.</strong>
-    </div>
-}
-else
-{
-    <div class="no-print">
-        <a asp-page="/User/LogPesanan" class="btn btn-secondary">Kembali</a>
-        <button onclick="window.print()" class="btn btn-primary">Cetak</button>
-    </div>
+    <div class="main-container w-full max-w-[450px] lg:max-w-[800px] bg-white min-h-screen lg:min-h-[auto] lg:rounded-[40px] shadow-2xl overflow-hidden p-6 md:p-8 flex flex-col justify-between border-0 md:border-[8px] border-slate-800 transition-all duration-300">
+        
+        <div>
+            @if (Model.Data == null)
+            {
+                <div class="text-center py-10">
+                    <h2 class="font-fredoka text-3xl lg:text-4xl font-bold text-black mb-4">Kwitansi tidak ditemukan.</h2>
+                    <a asp-page="/User/LogPesanan" class="bg-[#9492ff] hover:bg-[#5b59e0] text-black hover:text-white font-bold px-5 py-2.5 rounded-2xl shadow-sm transition-all border border-black/5">
+                        Kembali ke Log
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                    <div>
+                        <h2 class="font-fredoka text-3xl lg:text-4xl font-bold text-black">Detail Kwitansi</h2>
+                        <p class="text-sm text-slate-500 mt-1">Pesanan Anda sedang diproses</p>
+                    </div>
+                    <div class="flex gap-3 w-full sm:w-auto justify-end">
+                        <a asp-page="/Auth/Login" class="bg-green-500 hover:bg-green-600 text-white font-bold px-5 py-2.5 rounded-2xl text-sm lg:text-base shadow-sm transition-all border border-black/5 text-center flex-1 sm:flex-none">
+                            Selesai & Pesanan Berikutnya
+                        </a>
+                    </div>
+                </div>
 
-    <div class="receipt">
-        <div class="top">
-            <div>
-                <h2>Kwitansi</h2>
-                <div>No: <strong>@Model.Data.KodeKwitansi</strong></div>
-            </div>
+                <div class="border-2 border-slate-300 rounded-[24px] p-5 sm:p-6 bg-white mb-6 shadow-sm">
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-dashed border-slate-200 pb-4 mb-4 gap-2">
+                        <div>
+                            <span class="text-sm font-bold text-slate-400 uppercase tracking-wider block">No. Kwitansi</span>
+                            <h3 class="font-fredoka text-xl sm:text-2xl font-bold text-black">@Model.Data.KodeKwitansi</h3>
+                        </div>
+                        <div class="sm:text-right">
+                            <span class="text-sm font-bold text-slate-400 uppercase tracking-wider block">Waktu Transaksi</span>
+                            <span class="text-base sm:text-lg font-bold text-black">@Model.Data.WaktuDiteruskan.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                    </div>
 
-            <div class="right">
-                <div>Pesanan #@Model.Data.IdPesanan</div>
-                <div>@Model.Data.WaktuDiteruskan.ToString("dd/MM/yyyy HH:mm")</div>
-            </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="border border-slate-200 bg-slate-50/50 rounded-xl p-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Pembeli</span>
+                            <span class="text-base font-bold text-black">@Model.Data.NamaPembeli</span>
+                        </div>
+                        <div class="border border-slate-200 bg-slate-50/50 rounded-xl p-3">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Penjual / Toko</span>
+                            <span class="text-base font-bold text-black">@Model.Data.NamaToko</span>
+                        </div>
+                        <div class="border border-slate-200 bg-[#e6f9f3] rounded-xl p-3 flex flex-col justify-center">
+                            <span class="text-xs font-bold text-[#0f523d] uppercase tracking-wider block mb-0.5">Status Pembayaran</span>
+                            <span class="text-base font-bold text-[#007e33]">@Model.Data.StatusPembayaran</span>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto no-scrollbar border border-slate-200 rounded-xl bg-white mb-4">
+                        <table class="w-full text-left border-collapse min-w-[500px] text-base font-bold text-black">
+                            <thead>
+                                <tr class="text-center text-black bg-slate-50 border-b border-slate-200 text-sm">
+                                    <th class="py-3 px-4 text-left">Produk</th>
+                                    <th class="py-3 px-4 w-20">Qty</th>
+                                    <th class="py-3 px-4 text-right w-36">Harga Satuan</th>
+                                    <th class="py-3 px-4 text-right w-40">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @foreach (var item in Model.Data.Items)
+                                {
+                                    <tr class="align-middle">
+                                        <td class="py-4 px-4 text-left text-slate-900">@item.NamaProduk</td>
+                                        <td class="py-4 px-4 text-center text-slate-700">@item.Quantity</td>
+                                        <td class="py-4 px-4 text-right text-slate-700">Rp @item.Harga.ToString("N0")</td>
+                                        <td class="py-4 px-4 text-right text-black">Rp @item.Subtotal.ToString("N0")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="border-2 border-slate-300 rounded-xl p-3 flex justify-between items-center bg-slate-50/50 text-lg sm:text-xl font-bold text-black font-fredoka">
+                        <span class="text-slate-600">Total Pembayaran:</span>
+                        <span class="text-right text-2xl font-bold text-black">Rp @Model.Data.JumlahBayar.ToString("N0")</span>
+                    </div>
+
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-[20px] p-4 text-center">
+                    <p class="text-slate-500 text-sm font-semibold leading-relaxed m-0">
+                        Kwitansi ini sah dan diterbitkan otomatis oleh sistem sebagai bukti pembayaran digital yang menggunakan saldo internal aplikasi <strong>SaungJajan</strong>.
+                    </p>
+                </div>
+            }
+
         </div>
 
-        <p>Pembeli: <strong>@Model.Data.NamaPembeli</strong></p>
-        <p>Toko: <strong>@Model.Data.NamaToko</strong></p>
-        <p>Status Pembayaran: <strong>@Model.Data.StatusPembayaran</strong></p>
+        <div class="mt-8 pt-4 border-t border-slate-100 text-center text-xs text-slate-400">
+            &copy; 2026 - SaungJajan
+        </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Produk</th>
-                    <th class="center">Qty</th>
-                    <th class="right">Harga</th>
-                    <th class="right">Subtotal</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @foreach (var item in Model.Data.Items)
-                {
-                    <tr>
-                        <td>@item.NamaProduk</td>
-                        <td class="center">@item.Quantity</td>
-                        <td class="right">Rp @item.Harga.ToString("N0")</td>
-                        <td class="right">Rp @item.Subtotal.ToString("N0")</td>
-                    </tr>
-                }
-            </tbody>
-
-            <tfoot>
-                <tr>
-                    <th colspan="3" class="right">Total</th>
-                    <th class="right">Rp @Model.Data.JumlahBayar.ToString("N0")</th>
-                </tr>
-            </tfoot>
-        </table>
-
-        <p style="margin-top:24px;font-size:13px;">
-            Pembayaran dilakukan menggunakan saldo aplikasi.
-        </p>
     </div>
-}
+
+</body>
+</html>

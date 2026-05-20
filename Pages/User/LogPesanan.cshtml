@@ -2,216 +2,463 @@
 @model SAUNGJAJAN.Pages.User.LogPesananModel
 @{
     ViewData["Title"] = "Log Pesanan";
+    Layout = null;
 }
 
-<style>
-    .page-wrap {
-        max-width: 1100px;
-        margin: 30px auto;
-        font-family: Arial, sans-serif;
-    }
-
-    .toolbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 20px;
-    }
-
-    .filter-form {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .card {
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
-        padding: 18px;
-        margin-bottom: 16px;
-        background: white;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        border-bottom: 1px solid #e5e7eb;
-        padding-bottom: 12px;
-        margin-bottom: 12px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .btn {
-        display: inline-block;
-        padding: 9px 14px;
-        border-radius: 8px;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-primary {
-        background: #2563eb;
-        color: white;
-    }
-
-    .btn-secondary {
-        background: #64748b;
-        color: white;
-    }
-
-    .badge {
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: #e0f2fe;
-        color: #075985;
-        font-size: 13px;
-    }
-
-    @@media print {
-        .no-print {
-            display: none !important;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SaungJajan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            padding-bottom: 60px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .card {
-            box-shadow: none;
-            break-inside: avoid;
+        .custom-navbar {
+            padding: 16px 0;
+            background-color: #ffffff;
+            border-bottom: 1px solid #efeefc;
+            box-shadow: 0 2px 12px rgba(118, 117, 238, 0.03);
         }
-    }
 
-    .status-info {
-        margin-top: 14px;
-        padding: 12px 14px;
-        border-radius: 10px;
-        font-size: 14px;
-    }
-    .status-diproses {
-        background: #f1f5f9;
-        color: #334155;
-    }
-    .status-siap {
-        background: #dcfce7;
-        color: #166534;
-    }
-    .status-batal {
-        background: #fee2e2;
-        color: #991b1b;
-    }
-    .action-row {
-        margin-top: 14px;
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    }
-</style>
+        .nav-logo {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            color: #000000;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
 
-<div class="page-wrap">
-    <div class="toolbar no-print">
-        <form method="get" class="filter-form">
-            <label>Pilih Bulan:</label>
-            <input type="month" name="Bulan" value="@Model.Bulan" />
-            <button type="submit" class="btn btn-primary">Filter</button>
-        </form>
+        .nav-logo:hover { color: #000000; opacity: 0.85; }
 
-        <div>
-            <button onclick="window.print()" class="btn btn-primary">Cetak / Simpan PDF</button>
-            <a asp-page="/User/Menu" class="btn btn-secondary">Kembali ke Menu</a>
+        .nav-links-center {
+            display: flex;
+            align-items: center;
+            gap: 35px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .nav-link-item {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000000;
+            text-decoration: underline;
+            text-underline-offset: 6px;
+            text-decoration-thickness: 2.5px;
+        }
+
+        .nav-link-item:hover { color: #7675ee; }
+
+        .cart-icon-btn {
+            background: none;
+            border: none;
+            color: #000000;
+            display: inline-flex;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .cart-icon-btn:hover { transform: scale(1.08); color: #7675ee; }
+
+        .user-balance-box {
+            background-color: #f1f1f5;
+            border-radius: 14px;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #e2e2ea;
+            max-width: 260px;
+        }
+
+        .wallet-icon-wrapper {
+            background-color: #ffffff;
+            color: #7675ee;
+            border-radius: 10px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            flex-shrink: 0;
+        }
+
+        .balance-info-text { display: flex; flex-direction: column; text-align: left; line-height: 1.3; }
+        .balance-info-text .user-name { font-size: 0.95rem; font-weight: 700; color: #111111; }
+        .balance-info-text .balance-label { font-size: 0.8rem; font-weight: 600; color: #666666; text-transform: uppercase; }
+        .balance-info-text .balance-amount { font-size: 1.1rem; font-weight: 700; color: #000000; }
+
+        .page-title { font-size: 3.2rem; font-weight: 700; margin-top: 40px; margin-bottom: 8px; }
+        .page-subtitle { font-size: 1.5rem; font-weight: 700; margin-bottom: 30px; color: #666666; }
+
+        .order-card {
+            border: 2px solid #efeefc;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(118, 117, 238, 0.05);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #f0f0f5;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .order-id {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #7675ee;
+            margin-bottom: 8px;
+        }
+
+        .order-info {
+            font-size: 1rem;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .order-info strong {
+            color: #000000;
+        }
+
+        .order-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-diproses {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-siap {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-batal {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .order-table th {
+            background-color: #f8f9ff;
+            padding: 12px;
+            font-weight: 700;
+            color: #495057;
+            border-bottom: 2px solid #efeefc;
+            font-size: 0.95rem;
+        }
+
+        .order-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f5;
+            font-size: 1rem;
+        }
+
+        .order-table tfoot th {
+            background-color: #f8f9ff;
+            padding: 15px 12px;
+            font-weight: 700;
+            color: #000000;
+            border-top: 2px solid #efeefc;
+            font-size: 1.1rem;
+        }
+
+        .status-info-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .status-diproses-box {
+            background-color: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .status-siap-box {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .status-batal-box {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .btn-filter {
+            background-color: #7675ee;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 25px;
+            font-weight: 700;
+            color: white;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-filter:hover {
+            background-color: #6362dc;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary-custom {
+            background-color: #6c757d;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 25px;
+            font-weight: 700;
+            color: white;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-secondary-custom:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+
+        .btn-print {
+            background-color: #dc3545;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 25px;
+            font-weight: 700;
+            color: white;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-print:hover {
+            background-color: #c82333;
+            color: white;
+        }
+
+        .btn-kwitansi {
+            background-color: #7675ee;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 25px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-kwitansi:hover {
+            background-color: #6362dc;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .filter-bar {
+            background-color: #f8f9ff;
+            border: 2px solid #efeefc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+            .order-card {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .custom-navbar .container { flex-direction: column; gap: 16px; text-align: center; }
+            .nav-links-center { justify-content: center; gap: 25px; }
+            .user-balance-box { margin: 0 auto; width: 100%; max-width: 280px; }
+            .page-title { font-size: 2.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="custom-navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="nav-logo" asp-page="/User/Menu">Saung Jajan</a>
+
+            <ul class="nav-links-center">
+                <li><a asp-page="/User/Menu" class="nav-link-item">Home</a></li>
+                <li><a asp-page="/User/LogPesanan" class="nav-link-item" style="color: #7675ee;">Log</a></li>
+                <li>
+                    <a asp-page="/User/Keranjang" class="cart-icon-btn" title="Lihat Keranjang Belanja">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a1 1 0 1 0 0 2 1 1 0 0 0 0 -2m7 0a1 1 0 1 0 0 2 1 1 0 0 0 0 -2"/>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="user-balance-box">
+                <div class="wallet-icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
+                        <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9A1.5 1.5 0 0 1 1.5 3H2V1.78a1.5 1.5 0 0 1 1.864-1.454zM3 3h9v-.191A.5.5 0 0 0 11.378 2.34L3 3zm11 1.5h-11v9h11z"/>
+                    </svg>
+                </div>
+                <div class="balance-info-text">
+                    <span class="user-name">@Model.UserNama</span>
+                    <span class="balance-label">Periode Aktif</span>
+                    <span class="balance-amount">@Model.PeriodeText</span>
+                </div>
+            </div>
         </div>
+    </nav>
+
+    <div class="container">
+        <main role="main" class="pt-2">
+            <h2 class="page-title">Log Pesanan</h2>
+            <p class="page-subtitle">Riwayat pesanan Anda pada periode @Model.PeriodeText</p>
+
+            <div class="filter-bar no-print">
+                <form method="get" class="row align-items-center g-3">
+                    <div class="col-auto">
+                        <label class="form-label mb-0 fw-bold">Pilih Periode:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="month" name="Bulan" value="@Model.Bulan" class="form-control" style="border-radius: 10px; padding: 8px 15px;" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-filter">Filter</button>
+                    </div>
+                    <div class="col ms-auto text-end">
+                        <button onclick="window.print()" class="btn btn-print me-2">Cetak / Simpan PDF</button>
+                        <a asp-page="/User/Menu" class="btn btn-secondary-custom">Kembali ke Menu</a>
+                    </div>
+                </form>
+            </div>
+
+            @if (!Model.LogPesananList.Any())
+            {
+                <div class="alert alert-info" style="border-radius: 15px; padding: 20px;">
+                    Belum ada pesanan pada periode ini.
+                </div>
+            }
+            else
+            {
+                @foreach (var pesanan in Model.LogPesananList)
+                {
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Pesanan #@pesanan.IdPesanan</div>
+                                <div class="order-info">Nama Toko: <strong>@pesanan.NamaToko</strong></div>
+                                <div class="order-info">Waktu Pesan: @pesanan.WaktuPesan.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</div>
+                            </div>
+                            <div>
+                                @{
+                                    var statusClass = pesanan.Status.ToLower() switch
+                                    {
+                                        "diproses" => "status-diproses",
+                                        "siap" => "status-siap",
+                                        "dibatalkan" => "status-batal",
+                                        _ => "status-diproses"
+                                    };
+                                }
+                                <span class="order-status @statusClass">@pesanan.Status</span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="order-table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-start">Produk</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-end">Harga</th>
+                                        <th class="text-end">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var detail in pesanan.Detail)
+                                    {
+                                        <tr>
+                                            <td>@detail.NamaProduk</td>
+                                            <td class="text-center">@detail.Quantity</td>
+                                            <td class="text-end">Rp @detail.Harga.ToString("N0")</td>
+                                            <td class="text-end">Rp @detail.Subtotal.ToString("N0")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="3" class="text-end">Total Harga</th>
+                                        <th class="text-end">Rp @pesanan.TotalHarga.ToString("N0")</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        @if (pesanan.Status.Equals("Diproses", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <div class="status-info-box status-diproses-box">
+                                Pesanan sedang diproses oleh toko. Saldo Anda sudah dipotong saat checkout, tetapi dana masih ditahan oleh sistem.
+                            </div>
+                        }
+                        else if (pesanan.Status.Equals("Siap", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <div class="status-info-box status-siap-box">
+                                Pesanan sudah siap. Silakan datang ke toko untuk mengambil pesanan.
+                            </div>
+                            <div class="mt-3 no-print">
+                                <a asp-page="/User/Kwitansi" asp-route-idPesanan="@pesanan.IdPesanan" class="btn btn-kwitansi">
+                                    Cetak Kwitansi
+                                </a>
+                            </div>
+                        }
+                        else if (pesanan.Status.Equals("Dibatalkan", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <div class="status-info-box status-batal-box">
+                                Pesanan dibatalkan. Jika dana masih ditahan, saldo dikembalikan ke akun pembeli.
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </main>
     </div>
 
-    <h2>Log Pesanan</h2>
-    <p>Pembeli: <strong>@Model.UserNama</strong></p>
-    <p>Periode: <strong>@Model.PeriodeText</strong></p>
-
-    @if (!Model.LogPesananList.Any())
-    {
-        <div class="card">
-            Belum ada pesanan pada periode ini.
-        </div>
-    }
-    else
-    {
-        foreach (var pesanan in Model.LogPesananList)
-        {
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <h3>Riwayat Pemesanan #@pesanan.IdPesanan</h3>
-                        <div>Nama Toko: <strong>@pesanan.NamaToko</strong></div>
-                        <div>Waktu Pesan: @pesanan.WaktuPesan.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("id-ID"))</div>
-                    </div>
-
-                    <div>
-                        <span class="badge">@pesanan.Status</span>
-                    </div>
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Produk</th>
-                            <th style="text-align:center;">Qty</th>
-                            <th style="text-align:right;">Harga</th>
-                            <th style="text-align:right;">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var detail in pesanan.Detail)
-                        {
-                            <tr>
-                                <td>@detail.NamaProduk</td>
-                                <td style="text-align:center;">@detail.Quantity</td>
-                                <td style="text-align:right;">Rp @detail.Harga.ToString("N0")</td>
-                                <td style="text-align:right;">Rp @detail.Subtotal.ToString("N0")</td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="3" style="text-align:right;">Total Harga</th>
-                            <th style="text-align:right;">Rp @pesanan.TotalHarga.ToString("N0")</th>
-                        </tr>
-                    </tfoot>
-                </table>
-                @if (pesanan.Status.Equals("Diproses", StringComparison.OrdinalIgnoreCase))
-                {
-                    <div class="status-info status-diproses">
-                        Pesanan sedang diproses oleh toko. Saldo Anda sudah dipotong saat checkout, tetapi dana masih ditahan oleh sistem.
-                    </div>
-                }
-                else if (pesanan.Status.Equals("Siap", StringComparison.OrdinalIgnoreCase))
-                {
-                    <div class="status-info status-siap">
-                        Pesanan sudah siap. Silakan datang ke toko untuk mengambil pesanan.
-                    </div>
-                
-                    <div class="action-row no-print">
-                        <a asp-page="/User/Kwitansi"
-                           asp-route-idPesanan="@pesanan.IdPesanan"
-                           class="btn btn-primary">
-                            Cetak Kwitansi
-                        </a>
-                    </div>
-                }
-                else if (pesanan.Status.Equals("Dibatalkan", StringComparison.OrdinalIgnoreCase))
-                {
-                    <div class="status-info status-batal">
-                        Pesanan dibatalkan. Jika dana masih ditahan, saldo dikembalikan ke akun pembeli.
-                    </div>
-                }
-            </div>
-        }
-    }
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

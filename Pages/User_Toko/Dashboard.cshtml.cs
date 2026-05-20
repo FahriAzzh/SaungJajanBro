@@ -128,129 +128,6 @@ namespace SAUNGJAJAN.Pages.User_Toko
             }
         }
 
-        public async Task<IActionResult> OnPostUpdateProdukAsync(
-            int idProduk,
-            string namaMakanan,
-            string jenis,
-            decimal harga,
-            int stok)
-        {
-            var idToko = GetCurrentTokoId();
-
-            if (idToko == null)
-            {
-                return RedirectToPage("/Auth/LoginToko");
-            }
-
-            var produk = await _context.TbProduk
-                .FirstOrDefaultAsync(p => p.IdProduk == idProduk && p.IdToko == idToko);
-
-            if (produk == null)
-            {
-                ErrorMessage = "Produk tidak ditemukan.";
-                return RedirectToPage();
-            }
-
-            if (string.IsNullOrWhiteSpace(namaMakanan))
-            {
-                ErrorMessage = "Nama makanan tidak boleh kosong.";
-                return RedirectToPage();
-            }
-
-            if (harga <= 0)
-            {
-                ErrorMessage = "Harga harus lebih dari 0.";
-                return RedirectToPage();
-            }
-
-            if (stok < 0)
-            {
-                ErrorMessage = "Stok tidak boleh kurang dari 0.";
-                return RedirectToPage();
-            }
-
-            var perubahan = new List<string>();
-
-            string namaLama = produk.NamaMakanan;
-            string jenisLama = produk.Jenis;
-            decimal hargaLama = produk.Harga;
-            int stokLama = produk.Stok;
-
-            string namaBaru = namaMakanan.Trim();
-            string jenisBaru = jenis.Trim();
-
-            if (namaLama != namaBaru)
-            {
-                perubahan.Add($"Nama produk dari \"{namaLama}\" menjadi \"{namaBaru}\"");
-            }
-
-            if (jenisLama != jenisBaru)
-            {
-                perubahan.Add($"Jenis dari \"{jenisLama}\" menjadi \"{jenisBaru}\"");
-            }
-
-            if (hargaLama != harga)
-            {
-                perubahan.Add($"Harga dari Rp {hargaLama:N0} menjadi Rp {harga:N0}");
-            }
-
-            if (stokLama != stok)
-            {
-                perubahan.Add($"Stok dari {stokLama} menjadi {stok}");
-            }
-
-            if (!perubahan.Any())
-            {
-                SuccessMessage = $"Tidak ada perubahan pada produk \"{produk.NamaMakanan}\".";
-                return RedirectToPage();
-            }
-
-            produk.NamaMakanan = namaBaru;
-            produk.Jenis = jenisBaru;
-            produk.Harga = harga;
-            produk.Stok = stok;
-
-            await _context.SaveChangesAsync();
-
-            SuccessMessage = $"Produk \"{produk.NamaMakanan}\" berhasil diperbarui. Perubahan: {string.Join(", ", perubahan)}.";
-
-            return RedirectToPage();
-        }
-
-        public async Task<IActionResult> OnPostHapusProdukAsync(int idProduk)
-        {
-            var idToko = GetCurrentTokoId();
-
-            if (idToko == null)
-            {
-                return RedirectToPage("/Auth/LoginToko");
-            }
-    
-            var produk = await _context.TbProduk
-                .FirstOrDefaultAsync(p => p.IdProduk == idProduk && p.IdToko == idToko);
-
-            if (produk == null)
-            {
-                ErrorMessage = "Produk tidak ditemukan.";
-                return RedirectToPage();
-            }
-
-            bool sudahPernahDipesan = await _context.DetailPesanan
-                .AnyAsync(d => d.IdProduk == idProduk && d.IdToko == idToko.Value);
-
-            if (sudahPernahDipesan)
-            {
-                ErrorMessage = "Produk tidak bisa dihapus karena sudah memiliki riwayat pesanan.";
-                return RedirectToPage();
-            }
-
-            _context.TbProduk.Remove(produk);
-            await _context.SaveChangesAsync();
-
-            SuccessMessage = "Produk berhasil dihapus.";
-            return RedirectToPage();
-        }
-
         public async Task<IActionResult> OnPostUpdateStatusAsync(int idPesanan, string status)
         {
             var idToko = GetCurrentTokoId();
@@ -383,10 +260,9 @@ namespace SAUNGJAJAN.Pages.User_Toko
                 return;
             }
 
-            ProdukList = await _context.TbProduk
+            var produkList = await _context.TbProduk
                 .AsNoTracking()
                 .Where(p => p.IdToko == idToko)
-                .OrderBy(p => p.IdProduk)
                 .ToListAsync();
 
             var detailList = await (
@@ -444,8 +320,8 @@ namespace SAUNGJAJAN.Pages.User_Toko
                 .OrderByDescending(p => p.WaktuPesan)
                 .ToList();
 
-            TotalProduk = ProdukList.Count;
-            TotalStok = ProdukList.Sum(p => p.Stok);
+            TotalProduk = produkList.Count;
+            TotalStok = produkList.Sum(p => p.Stok);
             TotalPesanan = PesananList.Count;
 
             TotalPenjualanToko = Toko.Pemasukan;

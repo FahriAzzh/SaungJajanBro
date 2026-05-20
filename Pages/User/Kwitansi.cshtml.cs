@@ -21,22 +21,17 @@ namespace SAUNGJAJAN.Pages.User
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-
-            if (userId == null)
-            {
-                return RedirectToPage("/Auth/Login");
-            }
-
+            // Kwitansi bisa diakses tanpa login untuk sistem kios/antrian
+            // Validasi dilakukan melalui IdPesanan yang valid
+            
             var pembayaran = await _context.TbPembayaran
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p =>
-                    p.IdPesanan == IdPesanan &&
-                    p.IdUser == userId.Value);
+                    p.IdPesanan == IdPesanan);
 
             if (pembayaran == null)
             {
-                return RedirectToPage("/User/LogPesanan");
+                return RedirectToPage("/Auth/Login");
             }
 
             var rows = await (
@@ -50,7 +45,6 @@ namespace SAUNGJAJAN.Pages.User
                 join user in _context.TbUser.AsNoTracking()
                     on pesanan.IdUser equals user.IdUser
                 where pesanan.IdPesanan == IdPesanan
-                      && pesanan.IdUser == userId.Value
                 select new
                 {
                     pembayaran.KodeKwitansi,

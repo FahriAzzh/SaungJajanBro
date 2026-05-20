@@ -287,8 +287,26 @@ namespace SAUNGJAJAN.Pages.User
                 );
         
                 SuccessMessage = "Pesanan berhasil dibuat. Saldo sudah dipotong dan dana masih ditahan sampai toko menyiapkan pesanan.";
-        
-                return RedirectToPage("/User/LogPesanan");
+
+                // Dapatkan ID pesanan terakhir yang baru dibuat
+                var lastPesananId = _context.TbPesanan
+                    .Where(p => p.IdUser == userId.Value)
+                    .OrderByDescending(p => p.IdPesanan)
+                    .Select(p => p.IdPesanan)
+                    .FirstOrDefault();
+
+                // Logout user setelah checkout berhasil (sistem kios/antrian)
+                HttpContext.Session.Remove("UserId");
+                HttpContext.Session.Remove("UserNama");
+                HttpContext.Session.Remove("UserSaldo");
+
+                // Redirect ke halaman kwitansi untuk menunjukkan pesanan terakhir sebelum logout
+                if (lastPesananId > 0)
+                {
+                    return RedirectToPage("/User/Kwitansi", new { IdPesanan = lastPesananId });
+                }
+
+                return RedirectToPage("/Auth/Login");
             }
             catch (Exception ex)
             {

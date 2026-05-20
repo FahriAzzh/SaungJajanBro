@@ -11,7 +11,7 @@ namespace SAUNGJAJAN.Pages.Auth
             HttpContext.Session.Remove("NamaToko");
             HttpContext.Session.Remove("LoginSebagai");
 
-            return RedirectToPage("/Auth/LoginToko");
+            return RedirectToPage("/Index");
         }
     }
 }

@@ -1,16 +1,9 @@
-@page
-@model SAUNGJAJAN.Pages.Auth.LoginTokoModel
-@{
-    ViewData["Title"] = "Login Toko";
-    Layout = null;
-}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SaungJajan</title>
+    <title>Login Toko - SaungJajan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,6 +44,7 @@
             line-height: 1.3;
         }
 
+        /* Custom style agar elemen select menyerupai kapsul abu-abu pada mockup */
         .form-select-custom {
             background-color: #dbdbdb !important;
             border: none !important;
@@ -60,11 +54,12 @@
             text-align: center;
             color: #495057 !important;
             font-style: italic;
-            appearance: none;
+            appearance: none; /* Menghapus panah default browser agar teks rata tengah sempurna */
             cursor: pointer;
             transition: all 0.2s ease-in-out;
         }
 
+        /* Mengembalikan style normal untuk opsi list dropdown saat di-klik */
         .form-select-custom option {
             font-style: normal;
             text-align: left;
@@ -96,13 +91,8 @@
             transform: scale(0.98);
         }
 
-        .alert {
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        /* Responsive Optimization */
-        @@media (max-width: 576px) {
+        /* Optimasi Responsif Layar */
+        @media (max-width: 576px) {
             .brand-title {
                 font-size: 2.8rem;
             }
@@ -126,17 +116,13 @@
         <h1 class="brand-title">Login Toko</h1>
         <p class="brand-subtitle">Pilih toko untuk masuk ke dashboard toko.</p>
 
-        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
-        {
-            <div class="alert alert-danger">
-                @Model.ErrorMessage
-            </div>
-        }
-
-        <form method="post">
+        <form method="post" action="#">
             <div class="mb-5">
-                <select asp-for="IdToko" asp-items="Model.TokoOptions" class="form-select form-select-custom" required>
-                    <option value="">[pilih toko]</option>
+                <select name="IdToko" class="form-select form-select-custom" required>
+                    <option value="" selected>[pilih toko]</option>
+                    <option value="1">Warung Bu Sari</option>
+                    <option value="2">Kedai Pak Budi</option>
+                    <option value="3">Toko Makan Cepat</option>
                 </select>
             </div>
 
@@ -146,10 +132,6 @@
                 </button>
             </div>
         </form>
-
-        <div class="mt-4 text-center">
-            <a asp-page="/Auth/Login" style="color: #5856d6; font-weight: 700; font-style: italic;">Login sebagai User</a>
-        </div>
     </div>
 
 </body>

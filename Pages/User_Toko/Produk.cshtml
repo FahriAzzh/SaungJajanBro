@@ -1,0 +1,219 @@
+@page
+@model SAUNGJAJAN.Pages.User_Toko.ProdukModel
+@{
+    ViewData["Title"] = "Daftar Produk";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SaungJajan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Fredoka', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#1f1f1f] min-h-screen flex items-center justify-center p-0 md:p-6 lg:p-8">
+
+    <div class="w-full max-w-[450px] lg:max-w-[1000px] bg-white min-h-screen lg:min-h-[780px] lg:rounded-[40px] shadow-2xl overflow-hidden p-6 md:p-8 flex flex-col justify-between border-0 md:border-[8px] border-slate-800 transition-all duration-300">
+        
+        <div>
+            <div class="flex items-center justify-between mb-6 border-b-2 border-slate-100 pb-4">
+                <div>
+                    <h1 class="text-4xl lg:text-5xl font-bold tracking-tight text-black">Saung Jajan</h1>
+                    @if (!string.IsNullOrEmpty(Model.NamaToko))
+                    {
+                        <p class="text-lg lg:text-xl font-semibold text-slate-600 mt-1">@Model.NamaToko</p>
+                    }
+                </div>
+                <a asp-page="/Auth/LogoutToko" class="bg-[#7371fc] text-black text-lg lg:text-xl font-bold px-6 py-2 rounded-2xl hover:bg-[#5b59e0] hover:text-white transition-colors border-2 border-black/10 shadow-sm">
+                    Logout
+                </a>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mb-8 text-center border-b-2 border-slate-100">
+                <a asp-page="/User_Toko/Dashboard" class="text-slate-400 hover:text-black text-2xl lg:text-3xl font-bold pb-3 transition-colors">Home</a>
+                <a href="#" class="text-[#7371fc] text-2xl lg:text-3xl font-bold pb-3 border-b-4 border-[#7371fc]">Produk</a>
+                <a asp-page="/User_Toko/LaporanPenjualan" class="text-slate-400 hover:text-black text-2xl lg:text-3xl font-bold pb-3 transition-colors">Laporan</a>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+            {
+                <div class="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 ring-1 ring-emerald-200">
+                    @Model.SuccessMessage
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 ring-1 ring-red-200">
+                    @Model.ErrorMessage
+                </div>
+            }
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl lg:text-3xl font-bold text-black">Daftar Produk</h2>
+                        <span class="bg-black text-white text-xs lg:text-sm font-bold px-3 py-1 rounded-full shadow-sm">@Model.ProdukList.Count() Item</span>
+                    </div>
+
+                    <!-- Mobile Card View -->
+                    <div class="space-y-4 lg:hidden">
+                        @if (Model.ProdukList.Any())
+                        {
+                            @foreach (var produk in Model.ProdukList)
+                            {
+                                <div class="bg-[#dcdcdc] rounded-[24px] p-5 border border-slate-300 shadow-sm">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <h3 class="text-xl font-bold text-black leading-tight">@produk.NamaMakanan</h3>
+                                        <span class="bg-[#7371fc] text-black text-xs font-bold px-3 py-1 rounded-full uppercase">@produk.Jenis</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2 text-md border-b border-slate-400/30 pb-3 mb-3">
+                                        <div><span class="text-slate-600">Harga:</span> <span class="font-bold text-black">Rp @produk.Harga.ToString("N0")</span></div>
+                                        <div><span class="text-slate-600">Stok:</span> <span class="font-bold text-black">@produk.Stok</span></div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button onclick="editProduk('@produk.IdProduk', '@produk.NamaMakanan', '@produk.Jenis', @produk.Harga, @produk.Stok)" class="flex-1 bg-[#7371fc] text-black font-bold py-2 rounded-xl text-sm hover:bg-[#5b59e0] hover:text-white transition shadow-sm">Edit</button>
+                                        <form method="post" asp-page-handler="HapusProduk" onsubmit="return confirm('Hapus produk ini?');" class="inline">
+                                            <input type="hidden" name="idProduk" value="@produk.IdProduk" />
+                                            <button type="submit" class="bg-red-500 text-white font-bold py-2 px-4 rounded-xl text-sm hover:bg-red-600 transition shadow-sm">Hapus</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center py-10 text-slate-400">
+                                Belum ada produk.
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Desktop Table View -->
+                    <div class="hidden lg:block overflow-hidden rounded-[24px] border border-slate-200 shadow-md">
+                        @if (Model.ProdukList.Any())
+                        {
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-[#7371fc] text-black text-lg font-bold border-b border-black/10">
+                                        <th class="p-4">Nama Produk</th>
+                                        <th class="p-4">Jenis</th>
+                                        <th class="p-4">Harga</th>
+                                        <th class="p-4">Stok</th>
+                                        <th class="p-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-md bg-white">
+                                    @foreach (var produk in Model.ProdukList)
+                                    {
+                                        <tr class="hover:bg-slate-50 transition-colors">
+                                            <td class="p-4 font-bold text-black">@produk.NamaMakanan</td>
+                                            <td class="p-4"><span class="bg-[#7371fc]/15 text-[#5b59e0] text-xs font-bold px-3 py-1 rounded-full uppercase">@produk.Jenis</span></td>
+                                            <td class="p-4 font-semibold text-slate-700">Rp @produk.Harga.ToString("N0")</td>
+                                            <td class="p-4 font-semibold text-slate-700">@produk.Stok</td>
+                                            <td class="p-4 flex justify-center gap-2">
+                                                <button onclick="editProduk('@produk.IdProduk', '@produk.NamaMakanan', '@produk.Jenis', @produk.Harga, @produk.Stok)" class="bg-[#7371fc] text-black font-bold px-4 py-1.5 rounded-xl text-xs hover:bg-[#5b59e0] hover:text-white transition shadow-sm">Edit</button>
+                                                <form method="post" asp-page-handler="HapusProduk" onsubmit="return confirm('Hapus?');">
+                                                    <input type="hidden" name="idProduk" value="@produk.IdProduk" />
+                                                    <button type="submit" class="bg-red-500 text-white font-bold px-4 py-1.5 rounded-xl text-xs hover:bg-red-600 transition shadow-sm">Hapus</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="text-center py-10 text-slate-400 bg-white">
+                                Belum ada produk.
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 space-y-6 lg:mt-14">
+                    <div id="formInputProduk" class="bg-[#dcdcdc] rounded-[32px] overflow-hidden shadow-inner border border-slate-300">
+                        <div class="bg-[#7371fc] text-center py-3 border-b border-black/5">
+                            <h2 id="formHeader" class="text-3xl lg:text-4xl font-bold text-black tracking-wide">Tambah Produk</h2>
+                        </div>
+                        
+                        <form method="post" asp-page-handler="UpdateProduk" class="p-6 space-y-5">
+                            <input type="hidden" id="inputIdProduk" name="idProduk" />
+                            <input type="hidden" id="inputNamaAsli" name="nama_asli" />
+
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-xl lg:text-2xl font-bold text-black min-w-[85px]">Nama:</label>
+                                <input type="text" id="inputNama" name="namaMakanan" class="w-full bg-white rounded-xl py-2 px-4 text-lg border-none focus:outline-none focus:ring-4 focus:ring-[#7371fc]/50 shadow-sm transition-all" placeholder="Nama produk" required />
+                            </div>
+
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-xl lg:text-2xl font-bold text-black min-w-[85px]">Jenis:</label>
+                                <select id="inputJenis" name="jenis" class="w-full bg-white rounded-xl py-2 px-4 text-lg border-none focus:outline-none focus:ring-4 focus:ring-[#7371fc]/50 shadow-sm transition-all">
+                                    <option value="makanan">Makanan</option>
+                                    <option value="minuman">Minuman</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-xl lg:text-2xl font-bold text-black min-w-[85px]">Harga:</label>
+                                <input type="number" id="inputHarga" name="harga" placeholder="Masukkan harga" class="w-full bg-white rounded-xl py-2 px-4 text-lg border-none focus:outline-none focus:ring-4 focus:ring-[#7371fc]/50 shadow-sm transition-all" required />
+                            </div>
+
+                            <div class="flex items-center justify-between gap-4">
+                                <label class="text-xl lg:text-2xl font-bold text-black min-w-[85px]">Stok:</label>
+                                <input type="number" id="inputStok" name="stok" placeholder="Jumlah stok" class="w-full bg-white rounded-xl py-2 px-4 text-lg border-none focus:outline-none focus:ring-4 focus:ring-[#7371fc]/50 shadow-sm transition-all" required />
+                            </div>
+
+                            <div class="pt-2">
+                                <button type="submit" class="w-full bg-[#7371fc] text-black text-xl lg:text-2xl font-bold py-2.5 px-4 rounded-2xl hover:bg-[#5b59e0] hover:text-white transition-all shadow-md border border-black/10">
+                                    Simpan Perubahan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="mt-12 pt-4 border-t border-slate-100 text-center text-xs text-slate-400">
+            &copy; 2026 - SaungJajan
+        </div>
+
+    </div>
+
+    <script>
+        function editProduk(id, nama, jenis, harga, stok) {
+            // 1. Ubah header form secara visual agar user tahu mereka sedang mengedit barang
+            document.getElementById('formHeader').innerText = "Edit: " + nama;
+            
+            // 2. Isikan data dari tabel ke dalam form field sebelah kanan
+            document.getElementById('inputIdProduk').value = id;
+            document.getElementById('inputNamaAsli').value = nama;
+            document.getElementById('inputNama').value = nama;
+            document.getElementById('inputJenis').value = jenis;
+            document.getElementById('inputHarga').value = harga;
+            document.getElementById('inputStok').value = stok;
+            
+            // 3. Jika dibuka di HP (layar < 1024px), paksa Form untuk tampil
+            if (window.innerWidth < 1024) {
+                const formContainer = document.getElementById('formInputProduk');
+                formContainer.classList.remove('hidden');
+                // Scroll otomatis ke area form agar user mobile langsung melihatnya
+                formContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -23,6 +23,13 @@ namespace SAUNGJAJAN.Pages.Auth
         public string ErrorMessage { get; set; } = string.Empty;
         public string SuccessMessage { get; set; } = string.Empty;
 
+        public IActionResult OnGet()
+        {
+            // Fitur registrasi dinonaktifkan - gunakan aplikasi admin VB.NET
+            TempData["ErrorMessage"] = "Registrasi dinonaktifkan. Hubungi admin untuk pembuatan akun.";
+            return RedirectToPage("/Auth/Login");
+        }
+
         public class InputModel
         {
             public string Nama { get; set; } = string.Empty;
@@ -30,10 +37,6 @@ namespace SAUNGJAJAN.Pages.Auth
             public string Password { get; set; } = string.Empty;
             public string KonfirmasiPassword { get; set; } = string.Empty;
             public decimal Saldo { get; set; }
-        }
-
-        public void OnGet()
-        {
         }
 
         public async Task<IActionResult> OnPostAsync()
